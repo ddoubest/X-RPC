@@ -10,11 +10,13 @@ public class Client {
     private static final int BASE_SLEEP_TIME = 1000;
     private static final int MAX_RETRIES = 3;
 
+    private static final String ZK_SERVER = "140.210.200.195:21810";
+
     public static void main(String[] args) throws Exception {
         RetryPolicy retryPolicy = new ExponentialBackoffRetry(BASE_SLEEP_TIME, MAX_RETRIES);
         CuratorFramework zkClient = CuratorFrameworkFactory
                 .builder()
-                .connectString("140.210.200.195:21810")
+                .connectString(ZK_SERVER)
                 .retryPolicy(retryPolicy)
                 .build();
 
