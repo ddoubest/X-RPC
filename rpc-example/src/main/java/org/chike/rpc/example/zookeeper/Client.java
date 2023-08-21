@@ -1,4 +1,4 @@
-package org.chike.example.learning.zookeeper;
+package org.chike.rpc.example.zookeeper;
 
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;

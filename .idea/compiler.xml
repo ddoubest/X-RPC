@@ -11,8 +11,5 @@
         <module name="rpc-example" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="X-RPC" target="1.8" />
-    </bytecodeTargetLevel>
   </component>
 </project>
