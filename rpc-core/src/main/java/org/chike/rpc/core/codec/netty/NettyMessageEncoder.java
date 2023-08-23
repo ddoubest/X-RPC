@@ -13,7 +13,7 @@ import org.chike.rpc.core.domain.Message;
 public class NettyMessageEncoder extends MessageToByteEncoder<Message> implements MessageEncoder {
     @Override
     public byte[] encode(Message msg) {
-        return null;
+        return msg.encode();
     }
 
     @Override

@@ -22,9 +22,9 @@ public class NettyMessageDecoder extends LengthFieldBasedFrameDecoder implements
         if (ArrayUtils.isEmpty(bytes)) {
             throw new IllegalArgumentException("待解码byte数组为空");
         }
-        ByteBuf byteBuf = ByteBufAllocator.DEFAULT.buffer(bytes.length);
-        byteBuf.writeBytes(bytes);
+        ByteBuf byteBuf = ByteBufAllocator.DEFAULT.buffer(bytes.length);;
         try {
+            byteBuf.writeBytes(bytes);
             return decode(byteBuf);
         } finally {
             byteBuf.release();
