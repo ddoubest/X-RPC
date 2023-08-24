@@ -3,6 +3,7 @@ package org.chike.rpc.core.factory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.chike.rpc.core.annotation.SPI;
+import org.chike.rpc.core.codec.NeedId;
 import org.chike.rpc.core.exceptions.ExtensionClashException;
 
 import java.io.BufferedReader;
@@ -11,9 +12,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
@@ -120,5 +119,29 @@ public final class ExtensionLoader<T> {
             }
         }
         return instanceHolder.get(name);
+    }
+
+
+    public T getInstanceById(Byte id) {
+        List<T> result = new ArrayList<>();
+        for (String key : clazzHolder.keySet()) {
+            T instance = getInstance(key);
+            if (instance instanceof NeedId) {
+                byte componentId = ((NeedId) instance).getId();
+                if (componentId == id) {
+                    result.add(instance);
+                }
+            }
+        }
+        if (result.isEmpty()) {
+            return null;
+        }
+        if (result.size() > 1) {
+            String msg = "Extensions组件ID有冲突，冲突组件如下：\n" +
+                    result.toString();
+            throw new ExtensionClashException(msg);
+        }
+
+        return result.get(0);
     }
 }

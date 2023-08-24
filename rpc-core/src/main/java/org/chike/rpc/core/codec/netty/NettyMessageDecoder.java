@@ -6,10 +6,15 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import org.apache.commons.lang3.ArrayUtils;
+import org.chike.rpc.core.codec.ContentEncode;
 import org.chike.rpc.core.codec.MessageDecoder;
 import org.chike.rpc.core.constant.NettyConstants;
 import org.chike.rpc.core.constant.ProtocalConstants;
 import org.chike.rpc.core.domain.Message;
+import org.chike.rpc.core.enums.MessageType;
+import org.chike.rpc.core.extensions.Compresser;
+import org.chike.rpc.core.extensions.Serializer;
+import org.chike.rpc.core.factory.ExtensionLoader;
 
 @ChannelHandler.Sharable
 public class NettyMessageDecoder extends LengthFieldBasedFrameDecoder implements MessageDecoder {
@@ -35,9 +40,38 @@ public class NettyMessageDecoder extends LengthFieldBasedFrameDecoder implements
         if (byteBuf.readableBytes() < ProtocalConstants.HEADER_SIZE) {
             return null;
         }
-        return null;
-    }
+        if (!Message.MAGIC_NUMBER.check(byteBuf.readByte())) {
+            return null;
+        }
 
+        Serializer serializer = ExtensionLoader.getExtensionLoader(Serializer.class).getInstanceById(byteBuf.readByte());
+        if (serializer == null) {
+            return null;
+        }
+
+        Compresser compresser = ExtensionLoader.getExtensionLoader(Compresser.class).getInstanceById(byteBuf.readByte());
+        if (compresser == null) {
+            return null;
+        }
+
+        MessageType messageType = MessageType.getMessageTypeById(byteBuf.readByte());
+        if (messageType == null) {
+            return null;
+        }
+
+        int messageId = byteBuf.readInt();
+        int messageSize = byteBuf.readInt();
+
+        ContentEncode content = null;
+        if (messageSize > 0) {
+            byte[] source = new byte[messageSize];
+            byteBuf.readBytes(source);
+            byte[] decompressd = compresser.decompress(source);
+            content = serializer.deserialize(decompressd, ContentEncode.class);
+        }
+
+        return new Message(serializer, compresser, messageType, messageId, messageSize, content);
+    }
 
     @Override
     protected Object decode(ChannelHandlerContext ctx, ByteBuf in) throws Exception {

@@ -4,5 +4,8 @@ import org.chike.rpc.core.extensions.Compresser;
 import org.chike.rpc.core.extensions.Serializer;
 
 public interface ContentEncode {
-    byte[] encode(Serializer serializer, Compresser compresser);
+    default byte[] encode(Serializer serializer, Compresser compresser) {
+        byte[] serialized = serializer.serialize(this);
+        return compresser.compress(serialized);
+    }
 }

@@ -12,6 +12,15 @@ public enum MessageType implements SelfEncode {
     RPC_REQ(2, "rpcReq", "RPC请求"),
     RPC_RESP(3, "rpcResp", "RPC响应");
 
+    public static MessageType getMessageTypeById(byte id) {
+        for (MessageType messageType : MessageType.values()) {
+            if (id == messageType.id) {
+                return messageType;
+            }
+        }
+        return null;
+    }
+
     private final Byte id;
     private final String name;
     private final String desc;
@@ -24,6 +33,6 @@ public enum MessageType implements SelfEncode {
 
     @Override
     public byte[] encode() {
-        return new byte[0];
+        return new byte[] {id};
     }
 }

@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.ByteBufUtil;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.chike.rpc.core.codec.ContentEncode;
@@ -17,6 +18,7 @@ import org.chike.rpc.core.factory.SingletonFactory;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Message implements SelfEncode {
     // 1字节 魔数
     public static final MagicNumer MAGIC_NUMBER = SingletonFactory.getInstance(MagicNumer.class);
