@@ -1,0 +1,2 @@
+consistentHash=org.chike.rpc.core.extensions.impl.ConsistentHashLoadBalance
+random=org.chike.rpc.core.extensions.impl.RandomLoadBalance

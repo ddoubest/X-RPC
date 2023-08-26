@@ -30,10 +30,27 @@ public class RpcResponse implements ContentEncode, Serializable {
         return response;
     }
 
-    public static RpcResponse fail(RpcResponseCodeEnum rpcResponseCodeEnum) {
+    public static RpcResponse success(Object result, String responseMsg) {
         RpcResponse response = new RpcResponse();
-        response.setResponseCode(rpcResponseCodeEnum.getCode());
-        response.setResponseMsg(rpcResponseCodeEnum.getMessage());
+        response.setResponseCode(RpcResponseCodeEnum.SUCCESS.getCode());
+        response.setResponseMsg(responseMsg);
+        if (null != result) {
+            response.setResult(result);
+        }
+        return response;
+    }
+
+    public static RpcResponse fail() {
+        RpcResponse response = new RpcResponse();
+        response.setResponseCode(RpcResponseCodeEnum.FAIL.getCode());
+        response.setResponseMsg(RpcResponseCodeEnum.FAIL.getMessage());
+        return response;
+    }
+
+    public static RpcResponse fail(String responseMsg) {
+        RpcResponse response = new RpcResponse();
+        response.setResponseCode(RpcResponseCodeEnum.FAIL.getCode());
+        response.setResponseMsg(responseMsg);
         return response;
     }
 }

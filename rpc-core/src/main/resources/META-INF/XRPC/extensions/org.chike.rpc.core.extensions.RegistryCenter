@@ -1,0 +1,1 @@
+zk=org.chike.rpc.core.extensions.impl.ZkRegisterCenter

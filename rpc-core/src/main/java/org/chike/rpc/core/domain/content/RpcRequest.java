@@ -20,10 +20,10 @@ public class RpcRequest implements ContentEncode, Serializable {
     private Class<?>[] argsClass;
     private Object[] argsInstance;
 
-    private String group;
-    private String version;
+    private String group = "";
+    private String version = "";
 
     public String getRpcServiceName() {
-        return this.getInterfaceName() + this.getGroup() + this.getVersion();
+        return this.getInterfaceName() + "#" + this.getGroup() + "#" + this.getVersion();
     }
 }

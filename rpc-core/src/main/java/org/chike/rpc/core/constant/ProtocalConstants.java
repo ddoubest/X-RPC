@@ -9,5 +9,4 @@ public class ProtocalConstants {
     public static final int LENGTH_FIELD_OFFSET = 8;
     // 协议中，长度域的字节数
     public static final int LENGTH_FIELD_SIZE = 4;
-
 }
