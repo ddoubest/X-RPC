@@ -1,9 +1,7 @@
 package org.chike.rpc.core.domain;
 
 import lombok.extern.slf4j.Slf4j;
-import org.chike.rpc.core.config.RpcConfig;
 import org.chike.rpc.core.constant.NettyConstants;
-import org.chike.rpc.core.constant.RpcComponentConstants;
 import org.chike.rpc.core.enums.RpcConfigEnum;
 import org.chike.rpc.core.enums.RpcRuntimeErrorMessageEnum;
 import org.chike.rpc.core.exceptions.RpcRuntimeException;
@@ -20,10 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ServiceProvider {
     private final Map<String, Object> providers = new ConcurrentHashMap<>();
     private final RegistryCenter registryCenter = ExtensionLoader
-            .getExtensionLoader(RegistryCenter.class)
-            .getInstance(RpcConfig.getProperty(
-                    RpcConfigEnum.REGISTRY_CENTER_NAME.getPropertyValue(),
-                    RpcComponentConstants.DEFAULT_REGISTRY_CENTER));
+            .getExtensionFromConfig(RegistryCenter.class, RpcConfigEnum.REGISTRY_CENTER_NAME);
 
     public Object getProvider(String key) {
         return providers.get(key);

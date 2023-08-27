@@ -25,7 +25,6 @@ public class ZkUtil {
     private static final int BASE_SLEEP_TIME = 1000;
     private static final int MAX_RETRIES = 3;
     private static final int TIMEOUT_THRESHOLD = 10; // 10s
-    private static final String DEFAULT_ZK_SERVER = "127.0.0.1:2181";
     private static final Set<String> CACHED_EXIST_NODES = ConcurrentHashMap.newKeySet();
     private static final Map<String, List<String>> CACHED_CHILD_NODES = new ConcurrentHashMap<>();
 
@@ -42,7 +41,7 @@ public class ZkUtil {
         // check if user has set zk address
         String zookeeperAddress = RpcConfig.getProperty(
                 RpcConfigEnum.ZK_ADDRESS.getPropertyValue(),
-                DEFAULT_ZK_SERVER
+                RpcConfigEnum.ZK_ADDRESS.getDefaultValue()
         );
 
         // Retry strategy. Retry 3 times, and will increase the sleep time between retries.

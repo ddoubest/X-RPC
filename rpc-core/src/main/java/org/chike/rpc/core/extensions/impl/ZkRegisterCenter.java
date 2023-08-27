@@ -1,7 +1,5 @@
 package org.chike.rpc.core.extensions.impl;
 
-import org.chike.rpc.core.config.RpcConfig;
-import org.chike.rpc.core.constant.RpcComponentConstants;
 import org.chike.rpc.core.domain.content.RpcRequest;
 import org.chike.rpc.core.enums.RpcConfigEnum;
 import org.chike.rpc.core.enums.RpcRuntimeErrorMessageEnum;
@@ -17,11 +15,7 @@ import java.util.List;
 
 public class ZkRegisterCenter implements RegistryCenter {
     private final LoadBalance loadBalance = ExtensionLoader
-            .getExtensionLoader(LoadBalance.class)
-            .getInstance(RpcConfig.getProperty(
-                            RpcConfigEnum.LOAD_BALANCE_NAME.getPropertyValue(),
-                            RpcComponentConstants.DEFAULT_LOAD_BALANCE));
-
+            .getExtensionFromConfig(LoadBalance.class, RpcConfigEnum.LOAD_BALANCE_NAME);
     @Override
     public boolean registerService(String serviceName, InetSocketAddress address) {
         // InetSocketAddress.toString() 自带 "/"，eg: "/127.0.0.1:9899"

@@ -23,7 +23,7 @@ import java.net.UnknownHostException;
 @Slf4j
 @Component
 public class NettyServer {
-    NettyServer() {
+    public NettyServer() {
         // 清理注册服务的钩子
         clearAllHook();
 

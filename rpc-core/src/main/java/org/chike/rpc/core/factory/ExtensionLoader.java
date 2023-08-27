@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.chike.rpc.core.annotation.SPI;
 import org.chike.rpc.core.codec.NeedId;
+import org.chike.rpc.core.config.RpcConfig;
+import org.chike.rpc.core.enums.RpcConfigEnum;
 import org.chike.rpc.core.exceptions.ExtensionClashException;
 
 import java.io.BufferedReader;
@@ -143,5 +145,13 @@ public final class ExtensionLoader<T> {
         }
 
         return result.get(0);
+    }
+
+    public static <T> T getExtensionFromConfig(Class<T> clazz, RpcConfigEnum rpcConfigEnum) {
+        return ExtensionLoader
+                .getExtensionLoader(clazz)
+                .getInstance(RpcConfig.getProperty(
+                        rpcConfigEnum.getPropertyValue(),
+                        rpcConfigEnum.getDefaultValue()));
     }
 }

@@ -6,13 +6,11 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum RpcConfigEnum {
-
-    RPC_CONFIG_PATH("xrpc.properties"),
-    REGISTRY_CENTER_NAME("xrpc.registry.name"),
-    ZK_ADDRESS("xrpc.zookeeper.address"),
-    LOAD_BALANCE_NAME("xrpc.load_balance.name")
+    REGISTRY_CENTER_NAME("xrpc.registry.name", "zk"),
+    ZK_ADDRESS("xrpc.zookeeper.address", "127.0.0.1:2181"),
+    LOAD_BALANCE_NAME("xrpc.load_balance.name", "consistentHash")
     ;
 
     private final String propertyValue;
-
+    private final String defaultValue;
 }
