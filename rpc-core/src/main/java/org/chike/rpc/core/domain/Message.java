@@ -28,8 +28,6 @@ public class Message implements SelfEncode {
     private Compresser compresser;
     // 1字节 消息类型
     private MessageType messageType;
-    // 4字节 消息Id
-    private Integer messageId;
     // 4字节 消息体的大小
     private Integer contentSize;
     // 消息体
@@ -45,8 +43,7 @@ public class Message implements SelfEncode {
             byteBuf.writeBytes(MAGIC_NUMBER.encode())
                     .writeBytes(serializer.encode())
                     .writeBytes(compresser.encode())
-                    .writeBytes(messageType.encode())
-                    .writeInt(messageId);
+                    .writeBytes(messageType.encode());
 
             if (content == null
                     || messageType == MessageType.PING
@@ -68,18 +65,10 @@ public class Message implements SelfEncode {
     }
 
     private boolean check() {
-        if (serializer == null) {
+        if (serializer == null || compresser == null || messageType == null) {
             return false;
         }
-        if (compresser == null) {
-            return false;
-        }
-        if (messageType == null) {
-            return false;
-        }
-        if (messageId == null) {
-            return false;
-        }
+
         return true;
     }
 }

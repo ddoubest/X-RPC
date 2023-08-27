@@ -11,9 +11,14 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.chike.rpc.core.codec.netty.NettyMessageDecoder;
 import org.chike.rpc.core.codec.netty.NettyMessageEncoder;
+import org.chike.rpc.core.domain.Message;
 import org.chike.rpc.core.domain.content.RpcRequest;
+import org.chike.rpc.core.domain.content.RpcResponse;
+import org.chike.rpc.core.enums.MessageType;
 import org.chike.rpc.core.enums.RpcConfigEnum;
+import org.chike.rpc.core.extensions.Compresser;
 import org.chike.rpc.core.extensions.RegistryCenter;
+import org.chike.rpc.core.extensions.Serializer;
 import org.chike.rpc.core.factory.ExtensionLoader;
 import org.chike.rpc.core.factory.SingletonFactory;
 
@@ -24,10 +29,18 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 public class NettyClient {
-    private Bootstrap client;
+    private final Bootstrap client;
 
     private final RegistryCenter registryCenter = ExtensionLoader
-            .getExtensionFromConfig(RegistryCenter.class, RpcConfigEnum.REGISTRY_CENTER_NAME);
+            .getExtensionFromConfig(RegistryCenter.class, RpcConfigEnum.REGISTRY_CENTER);
+
+    private final Serializer serializer = ExtensionLoader
+            .getExtensionFromConfig(Serializer.class, RpcConfigEnum.SERIALIZER);
+
+    private final Compresser compresser  = ExtensionLoader
+            .getExtensionFromConfig(Compresser.class, RpcConfigEnum.COMPRESSER);
+
+    private final Map<String, CompletableFuture<RpcResponse>> unhandledResponseFutures = new ConcurrentHashMap<>();
 
     private final Map<String, Channel> connectedChannels = new ConcurrentHashMap<>();
 
@@ -45,14 +58,36 @@ public class NettyClient {
                         ChannelPipeline pipeline = ch.pipeline();
                         pipeline.addLast(SingletonFactory.getInstance(NettyMessageEncoder.class));
                         pipeline.addLast(SingletonFactory.getInstance(NettyMessageDecoder.class));
+                        pipeline.addLast(SingletonFactory.getInstance(NettyClientHandler.class));
                     }
                 });
     }
 
-    public Object sendRpcRequest(RpcRequest rpcRequest) {
+    public CompletableFuture<RpcResponse> sendRpcRequest(RpcRequest rpcRequest) {
         InetSocketAddress address = registryCenter.discoverService(rpcRequest);
         Channel channel = getActiveChannel(address);
-        return null;
+        CompletableFuture<RpcResponse> resultFuture = new CompletableFuture<>();
+
+        unhandledResponseFutures.put(rpcRequest.getRequestId(), resultFuture);
+
+        Message message = Message.builder()
+                .serializer(serializer)
+                .compresser(compresser)
+                .messageType(MessageType.RPC_REQ)
+                .content(rpcRequest)
+                .build();
+
+        channel.writeAndFlush(message).addListener((ChannelFutureListener) future -> {
+            if (future.isSuccess()) {
+                log.info("client send message: [{}]", message);
+            } else {
+                future.channel().close();
+                resultFuture.completeExceptionally(future.cause());
+                log.error("Send failed:", future.cause());
+            }
+        });
+
+        return resultFuture;
     }
 
     private Channel getActiveChannel(InetSocketAddress address) {
@@ -73,10 +108,19 @@ public class NettyClient {
                 log.info("The client has connected [{}] successful!", address.toString());
                 result.complete(future.channel());
             } else {
-                throw new IllegalStateException();
+                throw new IllegalStateException("bug occur!");
             }
         });
         return result.get();
+    }
+
+    public void complete(RpcResponse rpcResponse) {
+        CompletableFuture<RpcResponse> future = unhandledResponseFutures.remove(rpcResponse.getRequestId());
+        if (null != future) {
+            future.complete(rpcResponse);
+        } else {
+            throw new IllegalStateException("bug occur!");
+        }
     }
 
     private void shutdownHook(NioEventLoopGroup workers) {

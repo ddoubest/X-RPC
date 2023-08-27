@@ -15,6 +15,8 @@ import java.io.Serializable;
 public class RpcResponse implements ContentEncode, Serializable {
     private static final long serialVersionUID = -5633326222795826888L;
 
+    private String requestId;
+
     private Integer responseCode;
     private String responseMsg;
 

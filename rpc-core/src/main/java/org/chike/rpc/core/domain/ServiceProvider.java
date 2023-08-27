@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ServiceProvider {
     private final Map<String, Object> providers = new ConcurrentHashMap<>();
     private final RegistryCenter registryCenter = ExtensionLoader
-            .getExtensionFromConfig(RegistryCenter.class, RpcConfigEnum.REGISTRY_CENTER_NAME);
+            .getExtensionFromConfig(RegistryCenter.class, RpcConfigEnum.REGISTRY_CENTER);
 
     public Object getProvider(String key) {
         return providers.get(key);

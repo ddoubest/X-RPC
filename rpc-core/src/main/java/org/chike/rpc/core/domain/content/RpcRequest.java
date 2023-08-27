@@ -15,6 +15,8 @@ import java.io.Serializable;
 public class RpcRequest implements ContentEncode, Serializable {
     private static final long serialVersionUID = -1372275369287319053L;
 
+    private String requestId;
+
     private String interfaceName;
     private String methodName;
     private Class<?>[] argsClass;
