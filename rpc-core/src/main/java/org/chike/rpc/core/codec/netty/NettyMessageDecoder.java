@@ -59,7 +59,6 @@ public class NettyMessageDecoder extends LengthFieldBasedFrameDecoder implements
             return null;
         }
 
-        int messageId = byteBuf.readInt();
         int messageSize = byteBuf.readInt();
 
         ContentEncode content = null;
@@ -70,7 +69,7 @@ public class NettyMessageDecoder extends LengthFieldBasedFrameDecoder implements
             content = serializer.deserialize(decompressd, ContentEncode.class);
         }
 
-        return new Message(serializer, compresser, messageType, messageId, messageSize, content);
+        return new Message(serializer, compresser, messageType, messageSize, content);
     }
 
     @Override
