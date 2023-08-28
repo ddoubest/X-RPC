@@ -45,7 +45,6 @@ public class ServiceProvider {
                         providerConfig.toString()
                 );
             }
-
         } catch (UnknownHostException e) {
             log.error("Occur exception when getHostAddress: ", e);
         }

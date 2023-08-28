@@ -90,6 +90,15 @@ public class NettyClient {
         return resultFuture;
     }
 
+    public void complete(RpcResponse rpcResponse) {
+        CompletableFuture<RpcResponse> future = unhandledResponseFutures.remove(rpcResponse.getRequestId());
+        if (null != future) {
+            future.complete(rpcResponse);
+        } else {
+            throw new IllegalStateException("bug occur!");
+        }
+    }
+
     private Channel getActiveChannel(InetSocketAddress address) {
         Channel channel = connectedChannels.computeIfAbsent(address.toString(), ignored -> connect(address));
         if (!channel.isActive()) {
@@ -112,15 +121,6 @@ public class NettyClient {
             }
         });
         return result.get();
-    }
-
-    public void complete(RpcResponse rpcResponse) {
-        CompletableFuture<RpcResponse> future = unhandledResponseFutures.remove(rpcResponse.getRequestId());
-        if (null != future) {
-            future.complete(rpcResponse);
-        } else {
-            throw new IllegalStateException("bug occur!");
-        }
     }
 
     private void shutdownHook(NioEventLoopGroup workers) {

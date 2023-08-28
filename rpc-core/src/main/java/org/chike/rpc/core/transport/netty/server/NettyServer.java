@@ -14,14 +14,12 @@ import org.chike.rpc.core.codec.netty.NettyMessageEncoder;
 import org.chike.rpc.core.constant.NettyConstants;
 import org.chike.rpc.core.factory.SingletonFactory;
 import org.chike.rpc.core.utils.ZkUtil;
-import org.springframework.stereotype.Component;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
 @Slf4j
-@Component
 public class NettyServer {
     public NettyServer() {
         // 清理注册服务的钩子
@@ -68,7 +66,7 @@ public class NettyServer {
                         InetAddress.getLocalHost().getHostAddress(),
                         NettyConstants.SERVER_PORT
                 );
-                ZkUtil.clearRegistry( inetSocketAddress);
+                ZkUtil.clearRegistry(inetSocketAddress);
             } catch (UnknownHostException e) {
                 log.error(e.getMessage());
             }

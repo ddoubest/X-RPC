@@ -32,8 +32,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 
                 Message.MessageBuilder respMessageBuilder = Message.builder()
                         .serializer(msg.getSerializer())
-                        .compresser(msg.getCompresser())
-                        .messageId(msg.getMessageId());
+                        .compresser(msg.getCompresser());
 
                 switch (msg.getMessageType()) {
                     case PING: {
