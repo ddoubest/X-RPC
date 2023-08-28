@@ -19,6 +19,7 @@ public class ProviderBeanPostProcessor implements BeanPostProcessor {
             ProviderConfig providerConfig = ProviderConfig.builder()
                     .group(providerAnnotation.group())
                     .version(providerAnnotation.version())
+                    .provider(bean)
                     .build();
             serviceProvider.publishProvider(providerConfig);
         }

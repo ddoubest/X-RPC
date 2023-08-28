@@ -1,6 +1,7 @@
-package org.chike.rpc.core.extensions.impl;
+package org.chike.rpc.client.extensions;
 
 import org.chike.rpc.core.domain.content.RpcRequest;
+import org.chike.rpc.core.extensions.impl.AbstractLoadBalance;
 
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;

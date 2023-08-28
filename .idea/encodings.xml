@@ -3,5 +3,11 @@
   <component name="Encoding" defaultCharsetForPropertiesFiles="UTF-8">
     <file url="file://$PROJECT_DIR$/rpc-core/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/rpc-core/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/rpc-example/rpc-api/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/rpc-example/rpc-api/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/rpc-example/rpc-client/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/rpc-example/rpc-client/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/rpc-example/rpc-server/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/rpc-example/rpc-server/src/main/resources" charset="UTF-8" />
   </component>
 </project>

@@ -38,7 +38,7 @@ public class NettyServer {
                         protected void initChannel(NioSocketChannel ch) throws Exception {
                             ChannelPipeline pipeline = ch.pipeline();
                             pipeline.addLast(SingletonFactory.getInstance(NettyMessageEncoder.class));
-                            pipeline.addLast(SingletonFactory.getInstance(NettyMessageDecoder.class));
+                            pipeline.addLast(new NettyMessageDecoder());
                             pipeline.addLast(coreWorkers, SingletonFactory.getInstance(NettyServerHandler.class));
                         }
                     });
@@ -48,6 +48,7 @@ public class NettyServer {
             ChannelFuture channelFuture = serverBootstrap.bind(host, NettyConstants.SERVER_PORT);
             channelFuture.sync();
 
+            log.info("server start!");
             channelFuture.channel().closeFuture().sync();
         } catch (UnknownHostException | InterruptedException e) {
             log.error("occur exception when bootstrap server:", e);

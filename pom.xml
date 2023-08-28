@@ -11,6 +11,7 @@
   <url>http://maven.apache.org</url>
   <modules>
     <module>rpc-core</module>
+    <module>rpc-example</module>
   </modules>
 
   <properties>

@@ -10,7 +10,7 @@ public enum RpcConfigEnum {
     ZK_ADDRESS("xrpc.zookeeper.address", "127.0.0.1:2181"),
     LOAD_BALANCE("xrpc.load_balance.name", "consistentHash"),
     SERIALIZER("xrpc.serializer.name", "kryo"),
-    COMPRESSER("xrpc.compresser.name", "kryo"),
+    COMPRESSER("xrpc.compresser.name", "gzip"),
     ;
 
     private final String propertyValue;

@@ -10,7 +10,7 @@ class KryoSerializerTest {
 
     @Test
     void serialize() {
-        RpcResponse rpcResponse = new RpcResponse(100, "123", new Person("hjh", 1));
+        RpcResponse rpcResponse = new RpcResponse("", 100, "123", new Person("hjh", 1));
         System.out.println(kryoSerializer.serialize(rpcResponse).length);
     }
 

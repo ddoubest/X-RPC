@@ -7,11 +7,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="rpc-server" />
+        <module name="rpc-api" />
         <module name="rpc-core" />
+        <module name="rpc-client" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="rpc-example" target="1.8" />
-    </bytecodeTargetLevel>
   </component>
 </project>

@@ -2,7 +2,6 @@ package org.chike.rpc.core.codec.netty;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import org.apache.commons.lang3.ArrayUtils;
@@ -11,12 +10,14 @@ import org.chike.rpc.core.codec.MessageDecoder;
 import org.chike.rpc.core.constant.NettyConstants;
 import org.chike.rpc.core.constant.ProtocalConstants;
 import org.chike.rpc.core.domain.Message;
+import org.chike.rpc.core.domain.content.RpcRequest;
+import org.chike.rpc.core.domain.content.RpcResponse;
 import org.chike.rpc.core.enums.MessageType;
 import org.chike.rpc.core.extensions.Compresser;
 import org.chike.rpc.core.extensions.Serializer;
 import org.chike.rpc.core.factory.ExtensionLoader;
 
-@ChannelHandler.Sharable
+
 public class NettyMessageDecoder extends LengthFieldBasedFrameDecoder implements MessageDecoder {
     public NettyMessageDecoder() {
         super(NettyConstants.MAX_FRAME_LENGTH, ProtocalConstants.LENGTH_FIELD_OFFSET, ProtocalConstants.LENGTH_FIELD_SIZE);
@@ -66,7 +67,11 @@ public class NettyMessageDecoder extends LengthFieldBasedFrameDecoder implements
             byte[] source = new byte[messageSize];
             byteBuf.readBytes(source);
             byte[] decompressd = compresser.decompress(source);
-            content = serializer.deserialize(decompressd, ContentEncode.class);
+            if (messageType == MessageType.RPC_REQ) {
+                content = serializer.deserialize(decompressd, RpcRequest.class);
+            } else if (messageType == MessageType.RPC_RESP) {
+                content = serializer.deserialize(decompressd, RpcResponse.class);
+            }
         }
 
         return new Message(serializer, compresser, messageType, messageSize, content);

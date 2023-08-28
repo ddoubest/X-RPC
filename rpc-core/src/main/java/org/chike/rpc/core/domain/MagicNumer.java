@@ -16,6 +16,6 @@ public class MagicNumer implements SelfEncode {
 
     @Override
     public byte[] encode() {
-        return new byte[0];
+        return new byte[] {magicNumber};
     }
 }

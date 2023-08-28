@@ -57,7 +57,7 @@ public class NettyClient {
                     protected void initChannel(NioSocketChannel ch) throws Exception {
                         ChannelPipeline pipeline = ch.pipeline();
                         pipeline.addLast(SingletonFactory.getInstance(NettyMessageEncoder.class));
-                        pipeline.addLast(SingletonFactory.getInstance(NettyMessageDecoder.class));
+                        pipeline.addLast(new NettyMessageDecoder());
                         pipeline.addLast(SingletonFactory.getInstance(NettyClientHandler.class));
                     }
                 });
@@ -124,6 +124,9 @@ public class NettyClient {
     }
 
     private void shutdownHook(NioEventLoopGroup workers) {
-        Runtime.getRuntime().addShutdownHook(new Thread(workers::shutdownGracefully));
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            log.info("client workers shutdownGracefully!");
+            workers.shutdownGracefully();
+        }));
     }
 }

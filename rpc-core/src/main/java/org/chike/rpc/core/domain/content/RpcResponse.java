@@ -22,8 +22,9 @@ public class RpcResponse implements ContentEncode, Serializable {
 
     private Object result;
 
-    public static RpcResponse success(Object result) {
+    public static RpcResponse success(Object result, String requestId) {
         RpcResponse response = new RpcResponse();
+        response.setRequestId(requestId);
         response.setResponseCode(RpcResponseCodeEnum.SUCCESS.getCode());
         response.setResponseMsg(RpcResponseCodeEnum.SUCCESS.getMessage());
         if (null != result) {
@@ -32,8 +33,9 @@ public class RpcResponse implements ContentEncode, Serializable {
         return response;
     }
 
-    public static RpcResponse success(Object result, String responseMsg) {
+    public static RpcResponse success(Object result, String requestId, String responseMsg) {
         RpcResponse response = new RpcResponse();
+        response.setRequestId(requestId);
         response.setResponseCode(RpcResponseCodeEnum.SUCCESS.getCode());
         response.setResponseMsg(responseMsg);
         if (null != result) {

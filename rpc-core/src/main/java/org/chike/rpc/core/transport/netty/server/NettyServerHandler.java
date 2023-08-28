@@ -76,7 +76,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
             Method method = provider.getClass()
                     .getMethod(rpcRequest.getMethodName(), rpcRequest.getArgsClass());
             Object result = method.invoke(provider, rpcRequest.getArgsInstance());
-            return RpcResponse.success(result);
+            return RpcResponse.success(result, rpcRequest.getRequestId());
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             throw new RpcRuntimeException(e.getMessage(), e);
         }

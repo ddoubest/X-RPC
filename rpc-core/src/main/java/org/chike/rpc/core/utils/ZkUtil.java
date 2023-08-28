@@ -28,7 +28,7 @@ public class ZkUtil {
     private static final Set<String> CACHED_EXIST_NODES = ConcurrentHashMap.newKeySet();
     private static final Map<String, List<String>> CACHED_CHILD_NODES = new ConcurrentHashMap<>();
 
-    public static final String ZK_REGISTER_ROOT_PATH = "/xprc";
+    public static final String ZK_REGISTER_ROOT_PATH = "/xrpc";
 
     private static CuratorFramework baseClient;
 
