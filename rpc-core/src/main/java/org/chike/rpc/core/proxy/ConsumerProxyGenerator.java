@@ -1,5 +1,6 @@
 package org.chike.rpc.core.proxy;
 
+import org.chike.rpc.core.constant.RpcConstants;
 import org.chike.rpc.core.domain.content.RpcRequest;
 import org.chike.rpc.core.domain.content.RpcResponse;
 import org.chike.rpc.core.enums.RpcResponseCodeEnum;
@@ -13,6 +14,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 public class ConsumerProxyGenerator implements InvocationHandler {
     private final NettyClient client = SingletonFactory.getInstance(NettyClient.class);
@@ -40,11 +42,11 @@ public class ConsumerProxyGenerator implements InvocationHandler {
         CompletableFuture<RpcResponse> responseFuture = client.sendRpcRequest(rpcRequest);
         RpcResponse rpcResponse = null;
         try {
-            rpcResponse = responseFuture.get();
+            rpcResponse = responseFuture.get(RpcConstants.TIMEOUT, TimeUnit.MILLISECONDS);
         } catch (Exception e) {
             throw new RpcRuntimeException(
                     RpcRuntimeErrorMessageEnum.SERVICE_INVOCATION_FAILURE,
-                    rpcRequest.getRpcServiceName());
+                    e.toString());
         }
         check(rpcResponse, rpcRequest);
         return rpcResponse.getResult();

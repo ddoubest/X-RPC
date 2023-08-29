@@ -7,6 +7,7 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.timeout.IdleStateHandler;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.chike.rpc.core.codec.netty.NettyMessageDecoder;
@@ -56,6 +57,7 @@ public class NettyClient {
                     @Override
                     protected void initChannel(NioSocketChannel ch) throws Exception {
                         ChannelPipeline pipeline = ch.pipeline();
+                        pipeline.addLast(new IdleStateHandler(0, 15, 0));
                         pipeline.addLast(SingletonFactory.getInstance(NettyMessageEncoder.class));
                         pipeline.addLast(new NettyMessageDecoder());
                         pipeline.addLast(SingletonFactory.getInstance(NettyClientHandler.class));
@@ -99,7 +101,7 @@ public class NettyClient {
         }
     }
 
-    private Channel getActiveChannel(InetSocketAddress address) {
+    public Channel getActiveChannel(InetSocketAddress address) {
         Channel channel = connectedChannels.computeIfAbsent(address.toString(), ignored -> connect(address));
         if (!channel.isActive()) {
             Channel activeChannel = connect(address);

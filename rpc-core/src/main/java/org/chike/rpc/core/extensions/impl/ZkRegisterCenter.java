@@ -16,6 +16,7 @@ import java.util.List;
 public class ZkRegisterCenter implements RegistryCenter {
     private final LoadBalance loadBalance = ExtensionLoader
             .getExtensionFromConfig(LoadBalance.class, RpcConfigEnum.LOAD_BALANCE);
+
     @Override
     public boolean registerService(String serviceName, InetSocketAddress address) {
         // InetSocketAddress.toString() 自带 "/"，eg: "/127.0.0.1:9899"
