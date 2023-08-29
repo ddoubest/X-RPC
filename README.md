@@ -11,4 +11,4 @@ _注：此项目是作者以学习为目的进行设计和开发的，如有漏�
 ![RPC架构](./img/X-RPC架构图.png)
 
 ## QuickStart
-详见rpc-example，提供了服务端和客户端中使用X-RPC的案例。
+rpc-example提供了在服务端和客户端中使用X-RPC的案例，详见rpc-example中的rpc-server和rpc-client。
