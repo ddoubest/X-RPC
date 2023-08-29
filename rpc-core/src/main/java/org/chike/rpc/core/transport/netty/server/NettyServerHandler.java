@@ -19,6 +19,7 @@ import org.chike.rpc.core.factory.SingletonFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.concurrent.CompletableFuture;
 
 
 @Slf4j
@@ -55,6 +56,24 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
                         }
                         RpcRequest rpcRequest = (RpcRequest) msg.getContent();
                         RpcResponse rpcResponse = handleRequest(rpcRequest);
+
+                        // 服务端的异步模式
+                        if (rpcResponse.getResult() instanceof CompletableFuture) {
+                            CompletableFuture<?> future = (CompletableFuture<?>) rpcResponse.getResult();
+                            future.whenCompleteAsync((result, exception) -> {
+                                if (exception != null) {
+                                    log.error("server catch exception: {}", exception.getMessage());
+                                    ctx.close();
+                                    return;
+                                }
+                                rpcResponse.setResult(result);
+                                respMessageBuilder.content(rpcResponse);
+                                Message resp = respMessageBuilder.build();
+                                ctx.writeAndFlush(resp).addListener(ChannelFutureListener.CLOSE_ON_FAILURE);
+                            });
+                            return;
+                        }
+
                         respMessageBuilder.content(rpcResponse);
                         break;
                     }

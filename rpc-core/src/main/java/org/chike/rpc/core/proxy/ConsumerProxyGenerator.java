@@ -1,5 +1,6 @@
 package org.chike.rpc.core.proxy;
 
+import lombok.extern.slf4j.Slf4j;
 import org.chike.rpc.core.constant.RpcConstants;
 import org.chike.rpc.core.domain.content.RpcRequest;
 import org.chike.rpc.core.domain.content.RpcResponse;
@@ -16,6 +17,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 public class ConsumerProxyGenerator implements InvocationHandler {
     private final NettyClient client = SingletonFactory.getInstance(NettyClient.class);
 
@@ -39,16 +41,19 @@ public class ConsumerProxyGenerator implements InvocationHandler {
                 .version(this.version)
                 .build();
 
+        log.info("rpc call invoke: {}", rpcRequest.toString());
+
         CompletableFuture<RpcResponse> responseFuture = client.sendRpcRequest(rpcRequest);
-        RpcResponse rpcResponse = null;
-        try {
-            rpcResponse = responseFuture.get(RpcConstants.TIMEOUT, TimeUnit.MILLISECONDS);
-        } catch (Exception e) {
-            throw new RpcRuntimeException(
-                    RpcRuntimeErrorMessageEnum.SERVICE_INVOCATION_FAILURE,
-                    e.toString());
+
+        // 异步模式适配
+        if (method.getReturnType() == CompletableFuture.class) {
+            return CompletableFuture.supplyAsync(() -> {
+                RpcResponse rpcResponse = getAndCheckResponse(responseFuture, rpcRequest);
+                return rpcResponse.getResult();
+            });
         }
-        check(rpcResponse, rpcRequest);
+
+        RpcResponse rpcResponse = getAndCheckResponse(responseFuture, rpcRequest);
         return rpcResponse.getResult();
     }
 
@@ -57,6 +62,19 @@ public class ConsumerProxyGenerator implements InvocationHandler {
                 clazz.getClassLoader(),
                 new Class<?>[]{clazz},
                 this));
+    }
+
+    private RpcResponse getAndCheckResponse(CompletableFuture<RpcResponse> responseFuture, RpcRequest rpcRequest) {
+        RpcResponse rpcResponse;
+        try {
+            rpcResponse = responseFuture.get(RpcConstants.TIMEOUT, TimeUnit.MILLISECONDS);
+        } catch (Exception e) {
+            throw new RpcRuntimeException(
+                    RpcRuntimeErrorMessageEnum.SERVICE_INVOCATION_FAILURE,
+                    e.toString());
+        }
+        check(rpcResponse, rpcRequest);
+        return rpcResponse;
     }
 
     private void check(RpcResponse rpcResponse, RpcRequest rpcRequest) {

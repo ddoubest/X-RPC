@@ -96,6 +96,7 @@ public class ZkUtil {
             try {
                 if (!checkPathExisted(path)) {
                     log.error("node for path [{}] is not existed", path);
+                    return null;
                 }
                 result = zkClient.getChildren().forPath(path);
                 // 设置 Watcher，监控变化
